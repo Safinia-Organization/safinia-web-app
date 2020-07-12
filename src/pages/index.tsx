@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react"
-import { useHistory } from "react-router-dom"
+import { useNavigate, useLocation } from "@reach/router"
 import qs from "query-string"
 
 import styled from "styled-components"
@@ -143,20 +143,20 @@ const SearchWrapper = styled.div<SearchWrapperProps>`
   transition: 0.2s ease-in-out;
 `
 const IndexPage: React.FC = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
+  const location = useLocation()
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [fetchState, setFetchState] = useState<FetchState>(FetchState.Dormant)
   const [response, setResponse] = useState<Record<any, any> | null>(null)
   const search = useCallback((): void => {
     if (searchQuery) {
       setFetchState(FetchState.Requesting)
-      history.push({
-        search: qs.stringify({ search: searchQuery }),
-      })
+      const queryString = qs.stringify({ search: searchQuery })
+      navigate(`?${queryString}`)
     }
-  }, [history, searchQuery])
+  }, [navigate, searchQuery])
   useEffect(() => {
-    const urlSearchQuery = qs.parse(history.location.search)
+    const urlSearchQuery = qs.parse(location.search)
     if ("search" in urlSearchQuery) {
       if (urlSearchQuery.search) {
         setFetchState(FetchState.Requesting)
@@ -173,7 +173,8 @@ const IndexPage: React.FC = () => {
           .catch()
       }
     }
-  }, [history.location.search])
+  }, [location])
+  // TODO: Aidan implement this method
   const fetchSearchResults = (): Promise<Record<any, any>> => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
