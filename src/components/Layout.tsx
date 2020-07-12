@@ -21,6 +21,36 @@ const Footer = styled.footer`
   font-size: 12px;
 `
 
+const NavLinkWrapper = styled.div`
+  display: none;
+  @media (min-width: 600px) {
+    display: block;
+  }
+`
+
+const NavbarToggle = styled.button`
+  margin-left: 20px;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  background: ${({ theme }): string => theme.mode.background};
+  padding: 0;
+  align-items: stretch;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 28px;
+  width: 36px;
+  @media (min-width: 600px) {
+    display: none;
+  }
+`
+
+const NavbarToggleBar = styled.span`
+  background: ${({ theme }): string => theme.mode.text};
+  height: 3px;
+  border-radius: 1.5px;
+`
+
 const NavLink = styled(Link)`
   color: ${({ theme }): string => theme.mode.text};
   text-decoration: none;
@@ -75,10 +105,17 @@ const Layout: React.FC = ({ children }) => {
         <ImageWrapper>
           <Image fixed={data.file.childImageSharp.fixed} />
         </ImageWrapper>
-        <NavLink to="/about">About</NavLink>
-        <NavLink to="/team">Team</NavLink>
-        <NavLink to="/contact">Contact</NavLink>
+        <NavLinkWrapper>
+          <NavLink to="/about">About</NavLink>
+          <NavLink to="/team">Team</NavLink>
+          <NavLink to="/contact">Contact</NavLink>
+        </NavLinkWrapper>
         <ToggleButton onClick={toggleMode} />
+        <NavbarToggle>
+          <NavbarToggleBar />
+          <NavbarToggleBar />
+          <NavbarToggleBar />
+        </NavbarToggle>
       </Navbar>
       <Content>{children}</Content>
       <Footer>

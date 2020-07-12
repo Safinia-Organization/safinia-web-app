@@ -22,6 +22,19 @@ const SearchPage = styled.div`
   display: flex;
   flex-direction: column;
 `
+const CaptionText = styled.div`
+  color: ${({ theme }): string => theme.mode.text};
+  font-weight: 100;
+  font-size: 20px;
+  text-align: center;
+  @media (min-width: 400px) {
+    font-size: 24px;
+  }
+  @media (min-width: 600px) {
+    text-align: left;
+    font-size: 30px;
+  }
+`
 
 const JumboText = styled.div`
   color: ${({ theme }): string => theme.mode.text};
@@ -36,17 +49,15 @@ const JumboText = styled.div`
     font-size: 50px;
   }
 `
-const CaptionText = styled.div`
-  color: ${({ theme }): string => theme.mode.text};
-  font-weight: 100;
-  font-size: 20px;
-  text-align: center;
-  @media (min-width: 400px) {
-    font-size: 24px;
-  }
+
+const SearchContent = styled.div`
+  position: absolute;
+  top: -100px;
+  left: 0;
+  right: 0;
   @media (min-width: 600px) {
-    text-align: left;
-    font-size: 30px;
+    left: auto;
+    right: auto;
   }
 `
 
@@ -80,10 +91,6 @@ const Search = styled.input`
     margin-right: 20px;
   }
 `
-const SearchContent = styled.div`
-  position: absolute;
-  top: -100px;
-`
 
 const SearchButton = styled.button`
   background: ${({ theme }): string => theme.common.palette.brandGradient};
@@ -110,6 +117,10 @@ const SearchResult = styled.div`
   justify-content: center;
 `
 
+const SearchResultContent = styled.div`
+  color: ${({ theme }): string => theme.mode.text};
+`
+
 const StyledCircularProgress = styled(CircularProgress)`
   color: ${({ theme }): string => theme.common.palette.brand};
   align-self: center;
@@ -131,7 +142,6 @@ const SearchWrapper = styled.div<SearchWrapperProps>`
     fetchState === FetchState.Dormant ? "30vh" : "40px"};
   transition: 0.2s ease-in-out;
 `
-
 const IndexPage: React.FC = () => {
   const history = useHistory()
   const [searchQuery, setSearchQuery] = useState<string>("")
@@ -210,7 +220,9 @@ const IndexPage: React.FC = () => {
               <StyledCircularProgress color="inherit" size={100} />
             )}
             {fetchState === FetchState.Received && (
-              <>{JSON.stringify(response)}</>
+              <SearchResultContent>
+                {JSON.stringify(response)}
+              </SearchResultContent>
             )}
           </SearchResult>
         </SearchPage>
