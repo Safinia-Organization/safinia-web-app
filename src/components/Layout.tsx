@@ -1,11 +1,13 @@
-import React, { useContext } from "react"
+import React, { useContext, useState, useEffect } from "react"
 
 import Image from "gatsby-image"
 import { Link, graphql, useStaticQuery } from "gatsby"
 import styled from "styled-components"
 
+import HamburgerMenu from "../components/HamburgerMenu"
 import ToggleButton from "../components/ToggleButton"
-import { ThemeToggle } from "../theme"
+import { ThemeToggle, ThemeMode } from "../theme"
+import useWindowSize from "../utils/useWindowSize"
 
 const Navbar = styled.nav`
   display: flex;
@@ -23,40 +25,27 @@ const Footer = styled.footer`
 
 const NavLinkWrapper = styled.div`
   display: none;
-  @media (min-width: 600px) {
+  @media (min-width: 700px) {
     display: block;
   }
 `
 
-const NavbarToggle = styled.button`
-  margin-left: 20px;
-  cursor: pointer;
-  border: none;
-  display: flex;
-  background: ${({ theme }): string => theme.mode.background};
-  padding: 0;
-  align-items: stretch;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 28px;
-  width: 36px;
-  @media (min-width: 600px) {
-    display: none;
-  }
-`
-
-const NavbarToggleBar = styled.span`
-  background: ${({ theme }): string => theme.mode.text};
-  height: 3px;
-  border-radius: 1.5px;
-`
-
 const NavLink = styled(Link)`
-  color: ${({ theme }): string => theme.mode.text};
   text-decoration: none;
   text-transform: uppercase;
   margin-right: 30px;
   font-weight: 300;
+  color: inherit;
+`
+
+const NavOverlayLink = styled(Link)`
+  pointer-events: auto;
+  text-decoration: none;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  font-size: 24px;
+  font-weight: 300;
+  color: inherit;
 `
 
 const Copyright = styled.div`
@@ -70,27 +59,80 @@ const FooterLink = styled(Link)`
   margin-right: 20px;
 `
 
-const Content = styled.div`
-  flex-grow: 1;
-  display: flex;
-`
-
-const Page = styled.div`
+const Page = styled.main`
   background: ${({ theme }): string => theme.mode.background};
-  height: 100vh;
+  min-height: 100vh;
   padding: 0 20px;
   display: flex;
   flex-direction: column;
 `
 
-const ImageWrapper = styled.div`
+const ContentWrapper = styled.div`
+  flex-grow: 1;
+  display: flex;
+`
+
+const Content = styled.div`
+  align-self: stretch;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+`
+
+const InnerContent = styled.div`
+  width: 100%;
+  height: 100%;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+`
+
+const ImageLink = styled(Link)`
   flex-grow: 1;
 `
 
+const StyledHamburgerMenu = styled(HamburgerMenu)`
+  z-index: 2;
+  margin-left: 20px;
+  @media (min-width: 700px) {
+    display: none;
+  }
+`
+
+interface NavOverlayProps {
+  menuState: boolean
+}
+
+const NavOverlay = styled.div<NavOverlayProps>`
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: opacity 0.2s ease-in-out;
+  opacity: ${({ menuState }): string => (menuState ? "100%" : "0%")};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: ${({ theme }): string => theme.mode.background};
+`
+
 const Layout: React.FC = ({ children }) => {
-  const toggleMode = useContext(ThemeToggle)
+  const modeContext = useContext(ThemeToggle)
+  const [menuState, setMenuState] = useState(false)
+  const toggleMenuState = (): void => {
+    setMenuState(!menuState)
+  }
+  const [width] = useWindowSize()
+  useEffect(() => {
+    if (width >= 700) setMenuState(false)
+  }, [width])
+
   const data = useStaticQuery(graphql`
-    query MyQuery {
+    query LayoutQuery {
       file(relativePath: { eq: "logo.png" }) {
         childImageSharp {
           fixed(width: 150, height: 40) {
@@ -103,22 +145,42 @@ const Layout: React.FC = ({ children }) => {
   return (
     <Page>
       <Navbar>
-        <ImageWrapper>
+        <ImageLink aria-label="home" to="/">
           <Image fixed={data.file.childImageSharp.fixed} />
-        </ImageWrapper>
+        </ImageLink>
         <NavLinkWrapper>
+          <NavLink to="/">Home</NavLink>
           <NavLink to="/about">About</NavLink>
           <NavLink to="/team">Team</NavLink>
           <NavLink to="/contact">Contact</NavLink>
         </NavLinkWrapper>
-        <ToggleButton onClick={toggleMode} />
-        <NavbarToggle>
-          <NavbarToggleBar />
-          <NavbarToggleBar />
-          <NavbarToggleBar />
-        </NavbarToggle>
+        <ToggleButton
+          aria-label="toggle light/dark mode"
+          onClick={modeContext.toggleMode}
+          checked={modeContext.mode === ThemeMode.Dark}
+        />
+        <StyledHamburgerMenu
+          role="navigation"
+          aria-labelledby="nav-overlay"
+          menuState={menuState}
+          onClick={toggleMenuState}
+        />
+        <NavOverlay id="nav-overlay" menuState={menuState}>
+          {menuState && (
+            <React.Fragment>
+              <NavOverlayLink to="/">Home</NavOverlayLink>
+              <NavOverlayLink to="/about">About</NavOverlayLink>
+              <NavOverlayLink to="/team">Team</NavOverlayLink>
+              <NavOverlayLink to="/contact">Contact</NavOverlayLink>
+            </React.Fragment>
+          )}
+        </NavOverlay>
       </Navbar>
-      <Content>{children}</Content>
+      <ContentWrapper>
+        <Content>
+          <InnerContent>{children}</InnerContent>
+        </Content>
+      </ContentWrapper>
       <Footer>
         <Copyright>&copy; 2020 Safinia</Copyright>
         <FooterLink to="/privacy">Privacy</FooterLink>

@@ -4,6 +4,7 @@ import qs from "query-string"
 
 import styled from "styled-components"
 
+import { Header1, Header2 } from "../components/Typography"
 import SEO from "../components/SEO"
 import Layout from "../components/Layout"
 import CircularProgress from "@material-ui/core/CircularProgress"
@@ -11,51 +12,23 @@ import CircularProgress from "@material-ui/core/CircularProgress"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSearch } from "@fortawesome/free-solid-svg-icons"
 
-const SearchPageWrapper = styled.div`
-  align-self: stretch;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-`
-
-const SearchPage = styled.div`
-  width: 100%;
-  height: 100%;
-  max-width: 1000px;
-  display: flex;
-  flex-direction: column;
-`
-const CaptionText = styled.div`
-  color: ${({ theme }): string => theme.mode.text};
-  font-weight: 100;
-  font-size: 20px;
+const StyledHeader2 = styled(Header2)`
   text-align: center;
-  @media (min-width: 400px) {
-    font-size: 24px;
-  }
   @media (min-width: 600px) {
     text-align: left;
-    font-size: 30px;
   }
 `
 
-const JumboText = styled.div`
-  color: ${({ theme }): string => theme.mode.text};
-  font-weight: 700;
-  font-size: 30px;
+const StyledHeader1 = styled(Header1)`
   text-align: center;
-  @media (min-width: 400px) {
-    font-size: 40px;
-  }
   @media (min-width: 600px) {
     text-align: left;
-    font-size: 50px;
   }
 `
 
-const SearchContent = styled.div`
+const Details = styled.div`
   position: absolute;
-  top: -100px;
+  bottom: 80px;
   left: 0;
   right: 0;
   @media (min-width: 600px) {
@@ -64,7 +37,7 @@ const SearchContent = styled.div`
   }
 `
 
-const SearchBar = styled.div`
+const SearchBar = styled.form`
   display: flex;
   width: 100%;
   max-width: 800px;
@@ -121,7 +94,7 @@ const SearchResult = styled.div`
 `
 
 const SearchResultContent = styled.div`
-  color: ${({ theme }): string => theme.mode.text};
+  font-size: 24px;
 `
 
 const StyledCircularProgress = styled(CircularProgress)`
@@ -142,7 +115,7 @@ interface SearchWrapperProps {
 const SearchWrapper = styled.div<SearchWrapperProps>`
   position: relative;
   margin-top: ${({ fetchState }): string =>
-    fetchState === FetchState.Dormant ? "30vh" : "40px"};
+    fetchState === FetchState.Dormant ? "30vh" : "30px"};
   transition: 0.2s ease-in-out;
 `
 const IndexPage: React.FC = () => {
@@ -174,8 +147,12 @@ const IndexPage: React.FC = () => {
             setResponse(data)
           })
           .catch()
+        return
       }
+      return
     }
+    setSearchQuery("")
+    setFetchState(FetchState.Dormant)
   }, [location])
   // TODO: Aidan implement this method
   const fetchSearchResults = (): Promise<Record<any, any>> => {
@@ -193,45 +170,47 @@ const IndexPage: React.FC = () => {
   return (
     <Layout>
       <SEO title="Home" />
-      <SearchPageWrapper>
-        <SearchPage>
-          <SearchWrapper fetchState={fetchState}>
-            {fetchState === FetchState.Dormant && (
-              <SearchContent>
-                <CaptionText>Local STI/STD Information</CaptionText>
-                <JumboText>Made Accessible.</JumboText>
-              </SearchContent>
-            )}
-            <SearchBar>
-              <Search
-                autoFocus={true}
-                value={searchQuery}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                  setSearchQuery(e.target.value)
-                }}
-                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
-                  if (e.keyCode === 13) {
-                    search()
-                  }
-                }}
-              />
-              <SearchButton onClick={search}>
-                <FontAwesomeIcon icon={faSearch} color="white" />
-              </SearchButton>
-            </SearchBar>
-          </SearchWrapper>
-          <SearchResult>
-            {fetchState === FetchState.Requesting && (
-              <StyledCircularProgress color="inherit" size={100} />
-            )}
-            {fetchState === FetchState.Received && (
-              <SearchResultContent>
-                {JSON.stringify(response)}
-              </SearchResultContent>
-            )}
-          </SearchResult>
-        </SearchPage>
-      </SearchPageWrapper>
+      <SearchWrapper fetchState={fetchState}>
+        {fetchState === FetchState.Dormant && (
+          <Details>
+            <StyledHeader2>Local STI/STD Information</StyledHeader2>
+            <StyledHeader1>Made Accessible.</StyledHeader1>
+          </Details>
+        )}
+        <SearchBar>
+          <Search
+            type="text"
+            autoFocus={true}
+            value={searchQuery}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+              setSearchQuery(e.target.value)
+            }}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>): void => {
+              if (e.keyCode === 13) {
+                e.preventDefault()
+                search()
+              }
+            }}
+          />
+          <SearchButton
+            aria-label="search"
+            onClick={(e: React.MouseEvent<HTMLButtonElement>): void => {
+              e.preventDefault()
+              search()
+            }}
+          >
+            <FontAwesomeIcon icon={faSearch} color="white" />
+          </SearchButton>
+        </SearchBar>
+      </SearchWrapper>
+      <SearchResult>
+        {fetchState === FetchState.Requesting && (
+          <StyledCircularProgress color="inherit" size={100} />
+        )}
+        {fetchState === FetchState.Received && (
+          <SearchResultContent>{JSON.stringify(response)}</SearchResultContent>
+        )}
+      </SearchResult>
     </Layout>
   )
 }

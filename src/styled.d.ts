@@ -7,16 +7,19 @@ declare module "styled-components" {
         brand: string
         brandGradient: string
         brandGlow: string
-        active: string
+        brandGradientActive: string
       }
     }
     mode: {
       background: string
       dropShadow: string
+      plainDropShadow: string
       innerShadow: string
       concaveGradient: string
+      convexGradient: string
       text: string
       secondaryText: string
+      highContrast: string
     }
   }
 }

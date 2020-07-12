@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 
 import styled from "styled-components"
 
@@ -34,18 +34,23 @@ const ToggleHandle = styled.button<ToggleHandleProps>`
 
 interface ToggleButtonProps {
   onClick: () => any
+  checked: boolean
+  [x: string]: any
 }
 
-const ToggleButton: React.FC<ToggleButtonProps> = ({ onClick }) => {
-  const [checked, setChecked] = useState(false)
+const ToggleButton: React.FC<ToggleButtonProps> = ({
+  checked,
+  onClick,
+  ...rest
+}) => {
   return (
     <ToggleWrapper>
       <ToggleHandle
+        {...rest}
         checked={checked}
         onClick={(e: React.MouseEvent<HTMLButtonElement>): void => {
           e.preventDefault()
           onClick()
-          setChecked(!checked)
         }}
       >
         {checked ? (

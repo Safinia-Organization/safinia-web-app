@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
+
+require("dotenv").config()
+
 module.exports = {
   siteMetadata: {
     title: `Safinia`,
@@ -34,5 +37,12 @@ module.exports = {
     // `gatsby-plugin-offline`,
     `gatsby-plugin-typescript`,
     `gatsby-plugin-styled-components`,
+    {
+      resolve: `gatsby-source-contentful`,
+      options: {
+        spaceId: `56oyl5goksdk`,
+        accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+      },
+    },
   ],
 }

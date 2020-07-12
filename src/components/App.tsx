@@ -1,8 +1,8 @@
 import React, { useState } from "react"
 import { Helmet } from "react-helmet"
 
-import { ThemeProvider, createGlobalStyle } from "styled-components"
-import { theme, ThemeToggle } from "../theme"
+import styled, { ThemeProvider, createGlobalStyle } from "styled-components"
+import { theme, ThemeToggle, ThemeMode } from "../theme"
 
 import "normalize.css"
 import "focus-visible/dist/focus-visible.js"
@@ -18,10 +18,9 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-enum ThemeMode {
-  Light = "light",
-  Dark = "dark",
-}
+const AppStyles = styled.div`
+  color: ${({ theme }): string => theme.mode.text};
+`
 
 const App: React.FC = ({ children }) => {
   const [mode, setMode] = useState<ThemeMode>(ThemeMode.Light)
@@ -39,7 +38,7 @@ const App: React.FC = ({ children }) => {
         />
       </Helmet>
       <GlobalStyle />
-      <ThemeToggle.Provider value={toggleMode}>
+      <ThemeToggle.Provider value={{ toggleMode: toggleMode, mode: mode }}>
         <ThemeProvider
           theme={Object.assign(
             {},
@@ -47,7 +46,7 @@ const App: React.FC = ({ children }) => {
             { common: theme.common }
           )}
         >
-          {children}
+          <AppStyles>{children}</AppStyles>
         </ThemeProvider>
       </ThemeToggle.Provider>
     </React.Fragment>
