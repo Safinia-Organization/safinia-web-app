@@ -131,7 +131,14 @@ const ContactPage: React.FC<ContactPageProps> = ({ data }) => {
             setBody(e.target.value)
           }}
         />
-        <ContactSubmit onClick={sendEmail}>Submit</ContactSubmit>
+        <ContactSubmit
+          onClick={(e: React.MouseEvent<HTMLButtonElement>): void => {
+            e.preventDefault()
+            sendEmail()
+          }}
+        >
+          Submit
+        </ContactSubmit>
       </ContactForm>
     </Layout>
   )
