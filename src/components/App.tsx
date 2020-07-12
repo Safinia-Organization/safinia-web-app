@@ -1,6 +1,5 @@
 import React, { useState } from "react"
 import { Helmet } from "react-helmet"
-import { BrowserRouter as Router } from "react-router-dom"
 
 import { ThemeProvider, createGlobalStyle } from "styled-components"
 import { theme, ThemeToggle } from "../theme"
@@ -33,26 +32,24 @@ const App: React.FC = ({ children }) => {
   }
   return (
     <React.Fragment>
-      <Router>
-        <Helmet>
-          <link
-            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;500;700&display=swap"
-            rel="stylesheet"
-          />
-        </Helmet>
-        <GlobalStyle />
-        <ThemeToggle.Provider value={toggleMode}>
-          <ThemeProvider
-            theme={Object.assign(
-              {},
-              { mode: theme[mode] },
-              { common: theme.common }
-            )}
-          >
-            {children}
-          </ThemeProvider>
-        </ThemeToggle.Provider>
-      </Router>
+      <Helmet>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;500;700&display=swap"
+          rel="stylesheet"
+        />
+      </Helmet>
+      <GlobalStyle />
+      <ThemeToggle.Provider value={toggleMode}>
+        <ThemeProvider
+          theme={Object.assign(
+            {},
+            { mode: theme[mode] },
+            { common: theme.common }
+          )}
+        >
+          {children}
+        </ThemeProvider>
+      </ThemeToggle.Provider>
     </React.Fragment>
   )
 }
