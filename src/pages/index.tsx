@@ -4,6 +4,7 @@ import qs from "query-string"
 
 import styled from "styled-components"
 
+import SEO from "../components/SEO"
 import Layout from "../components/Layout"
 import CircularProgress from "@material-ui/core/CircularProgress"
 
@@ -11,13 +12,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSearch } from "@fortawesome/free-solid-svg-icons"
 
 const SearchPageWrapper = styled.div`
-  height: 100%;
+  align-self: stretch;
   display: flex;
   justify-content: center;
+  width: 100%;
 `
 
 const SearchPage = styled.div`
   width: 100%;
+  height: 100%;
   max-width: 1000px;
   display: flex;
   flex-direction: column;
@@ -189,6 +192,7 @@ const IndexPage: React.FC = () => {
   }
   return (
     <Layout>
+      <SEO title="Home" />
       <SearchPageWrapper>
         <SearchPage>
           <SearchWrapper fetchState={fetchState}>
