@@ -76,28 +76,33 @@ interface TeamPageProps {
   data: Record<any, any>
 }
 
-const TeamPage: React.FC<TeamPageProps> = ({ data }) => (
-  <Layout>
-    <SEO title="Team" />
-    <StyledHeader1>Meet the Team</StyledHeader1>
-    <Body>{data.contentfulSiteContentTeamTextTextNode.teamText}</Body>
-    <Team>
-      {data.allContentfulTeam.edges.map(
-        (edge: Record<any, any>, index: number) => (
-          <CardBorder key={index}>
-            <Card>
-              <CardMedia fluid={edge.node.headshot.fluid} />
-              <CardDetails>
-                <CardName>{edge.node.name}</CardName>
-                <CardPosition>{edge.node.position}</CardPosition>
-              </CardDetails>
-            </Card>
-          </CardBorder>
-        )
-      )}
-    </Team>
-  </Layout>
-)
+const TeamPage: React.FC<TeamPageProps> = ({ data }) => {
+  data.allContentfulTeam.edges.sort((a: any, b: any) => {
+    return a.node.order - b.node.order
+  })
+  return (
+    <Layout>
+      <SEO title="Team" />
+      <StyledHeader1>Meet the Team</StyledHeader1>
+      <Body>{data.contentfulSiteContentTeamTextTextNode.teamText}</Body>
+      <Team>
+        {data.allContentfulTeam.edges.map(
+          (edge: Record<any, any>, index: number) => (
+            <CardBorder key={index}>
+              <Card>
+                <CardMedia fluid={edge.node.headshot.fluid} />
+                <CardDetails>
+                  <CardName>{edge.node.name}</CardName>
+                  <CardPosition>{edge.node.position}</CardPosition>
+                </CardDetails>
+              </Card>
+            </CardBorder>
+          )
+        )}
+      </Team>
+    </Layout>
+  )
+}
 
 export default TeamPage
 
@@ -113,6 +118,7 @@ export const query = graphql`
           }
           name
           position
+          order
         }
       }
     }
