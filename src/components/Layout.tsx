@@ -133,7 +133,14 @@ const Layout: React.FC = ({ children }) => {
 
   const data = useStaticQuery(graphql`
     query LayoutQuery {
-      file(relativePath: { eq: "logo.png" }) {
+      light: file(relativePath: { eq: "logo.png" }) {
+        childImageSharp {
+          fixed(width: 142, height: 30) {
+            ...GatsbyImageSharpFixed
+          }
+        }
+      }
+      dark: file(relativePath: { eq: "darklogo.png" }) {
         childImageSharp {
           fixed(width: 142, height: 30) {
             ...GatsbyImageSharpFixed
@@ -146,7 +153,13 @@ const Layout: React.FC = ({ children }) => {
     <Page>
       <Navbar>
         <ImageLink aria-label="home" to="/">
-          <Image fixed={data.file.childImageSharp.fixed} />
+          <Image
+            fixed={
+              modeContext.mode === ThemeMode.Light
+                ? data.light.childImageSharp.fixed
+                : data.dark.childImageSharp.fixed
+            }
+          />
         </ImageLink>
         <NavLinkWrapper>
           <NavLink to="/">Home</NavLink>
