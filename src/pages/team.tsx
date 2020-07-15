@@ -36,6 +36,7 @@ const CardBorder = styled.div`
 `
 
 const Card = styled.div`
+  height: 100%;
   border-radius: 20px;
   overflow: hidden;
   display: flex;
